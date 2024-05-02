@@ -77,7 +77,7 @@ try {
     params.log_item.vers = params.newVersion;
 
     if(params.log_item.descr) {
-      clipboard.writeSync(params.log_item.vers + ' - ' + params.log_item.descr);
+      clipboard.writeSync('v.' + params.log_item.vers + ' - ' + params.log_item.descr);
     }
 
     if(debug) {
