@@ -147,7 +147,7 @@ export async function chooser() {
               }
             })
               .then((descr) => {
-                params.log_item.descr = descr.trim() || null;
+                params.log_item.descr = descr?.trim() || null;
                 return answer;
               });
 
