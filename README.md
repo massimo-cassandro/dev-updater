@@ -31,13 +31,15 @@ Utilizzo:
 npx update-version --config=./dev-utilities.config.mjs
 ```
 
-Il comando può essere eseguito anche senza installare il package (utile specialmente per il mo setup):
+Il comando può essere eseguito anche senza installare il package:
 
 ```
 npx --package=@massimo-cassandro/dev-utilities update-version
 ```
 
 In cui  `--config=<path>` indica il percorso al file `.mjs` di configurazione generale (vedi sotto). Il file deve esportare un oggetto con la proprietà `updateVersion`. Se il path non viene specificato, il percorso di default è `./dev-utilities.config.mjs`.
+
+Se il file non viene trovato, vengono utilizzate le impostazioni di default.
 
 
 Esempio di file di configurazione (file `dev-utilities.config.mjs`):

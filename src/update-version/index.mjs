@@ -30,8 +30,8 @@ try {
   // lettura versione e inizializzazione variabili
   params.preRelease = false;
 
-  // avvio nuovo progetto (cghangelog.txt non presente):
-  // viener aggiunta l'opzione di utiilizzare la versione package json corrente
+  // avvio nuovo progetto (changelog.txt non presente):
+  // viene aggiunta l'opzione di utiilizzare la versione package json corrente
   params.startProj = !fs.existsSync(params.logFile);
 
 

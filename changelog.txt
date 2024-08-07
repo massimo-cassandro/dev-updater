@@ -1,3 +1,4 @@
 2022-10-31T10:00:00.000Z |            1.0.0 | update-version: Prima release da dev-utilities. Agg. nuova verione inquirer
 2024-05-02T09:18:19.046Z |            1.0.1 | Upd
 2024-05-13T09:49:57.769Z |            1.0.2 | Fix
+2024-08-07T20:00:33.164Z |            1.0.3 | readme upd
