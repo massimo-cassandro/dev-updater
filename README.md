@@ -37,10 +37,24 @@ Il comando può essere eseguito anche senza installare il package:
 npx --package=@massimo-cassandro/dev-utilities update-version
 ```
 
-In cui  `--config=<path>` indica il percorso al file `.mjs` di configurazione generale (vedi sotto). Il file deve esportare un oggetto con la proprietà `updateVersion`. Se il path non viene specificato, il percorso di default è `./dev-utilities.config.mjs`.
+In cui  `--config=<path>` indica il percorso al file `.mjs` di configurazione generale (vedi sotto). Il file deve esportare un oggetto con la proprietà `updateVersion`. Se il path non viene specificato, il file di default è `./dev-utilities.config.mjs` (sulla root del progetto).
 
-Se il file non viene trovato, vengono utilizzate le impostazioni di default.
+Se il file di configurazione non viene indicato, vengono utilizzate le impostazioni di default.
 
+Quindi:
+
+```bash 
+# il file di configurazione è quello indicato:
+npx update-version --config=./path/to/dev-utilities.config.mjs 
+
+# il file di configurazione è `./dev-utilities.config.mjs`
+npx update-version --config 
+
+# nessun file di configurazione, vengono utilizzate le impostazioni di default
+npx update-version 
+```
+
+### File di configurazione 
 
 Esempio di file di configurazione (file `dev-utilities.config.mjs`):
 
@@ -62,6 +76,9 @@ const config = {
 
 export default config;
 ```
+
+NB: il file di configurazione potrebbe essere condiviso da altre applicazioni, la parte utilizzata da *update-version* è quella relativa alla chiave `updateVersion`.
+
 
 
 Nel dettaglio:
