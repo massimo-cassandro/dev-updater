@@ -5,10 +5,12 @@
 
 // shell: npm info YOUR_PACKAGE version
 import * as fs from 'fs';
-import chalk from 'chalk';
+import * as path from 'path';
 import clipboard from 'clipboardy';
+import { styleText } from 'node:util';
 
-import getConfig from '../shared/getConfig.mjs';
+import getConfig from './src/getConfig.mjs';
+import { getCliParams } from './src/getCliParams.mjs';
 import { params } from './src/params.mjs';
 import { updateLog } from './src/updateLog.mjs';
 import { updateFiles } from './src/updateFiles.mjs';
@@ -16,36 +18,76 @@ import { updateVersion } from './src/updateVersion.mjs';
 import { chooser } from './src/chooser-inquirer.mjs';
 
 
-// https://github.com/chalk/chalk
+// https://nodejs.org/api/util.html#utilstyletextformat-text-options
 // https://github.com/SBoudrias/Inquirer.js
 
-const log = console.log;
 
 // se true non scrive nulla ma restituisce in console l'oggetto dei parametri elaborati
 const debug = false;
 
-
 try {
+
+  // =>> parametri CLI
+  const [config_file, cli_cfg] = getCliParams();
+
+
+  // =>> lettura e creazione oggetto di configurazione (params.cfg)
+  let loadedCfg = {};
+
+  if(config_file) {
+
+    loadedCfg = await getConfig(config_file);
+
+    if(loadedCfg === false) {
+      throw 'Errore nella lettura del file di configurazione';
+    }
+
+    // risoluzione eventuali path presenti in loadedCfg e non presenti in cli_cfg
+    ['packageJsonFile', 'logFile', 'twigVarsFile', 'htmlFiles', 'jsonFiles'].forEach(el => {
+      if(params.cfg[el] && !cli_cfg[el]) {
+        if(typeof loadedCfg[el] === 'string') {
+          loadedCfg[el] = path.resolve(config_file, loadedCfg[el]);
+
+        } else if(Array.isArray(loadedCfg[el])) {
+          loadedCfg[el] = loadedCfg[el].map(file => {
+            return path.resolve(config_file, file);
+          });
+        }
+      }
+    });
+  }
+  params.cfg = {...params.cfgDefaults, ...(loadedCfg?? {}), ...(cli_cfg?? {})};
+
+
+  // =>> init
 
   // lettura versione e inizializzazione variabili
   params.preRelease = false;
 
   // avvio nuovo progetto (changelog.txt non presente):
   // viene aggiunta l'opzione di utiilizzare la versione package json corrente
-  params.startProj = !fs.existsSync(params.logFile);
+  params.startProj = !fs.existsSync(params.cfg.logFile);
 
-
-  if(!fs.existsSync(params.packageJsonFile)) {
-    throw `File '${params.packageJsonFile}' non trovato`;
+  // forzatura di alcune parametri per l'avvio di nuovi progetti
+  if(params.startProj) {
+    params.cfg.defaultDescr = 'Setup';
+    params.cfg.skipDescrPrompt = false;
+    params.cfg.patchOnly = false;
   }
 
-  let file_content = fs.readFileSync(params.packageJsonFile, 'utf8');
+  if(!fs.existsSync(params.cfg.packageJsonFile)) {
+    throw `File '${params.cfg.packageJsonFile}' non trovato`;
+  }
+
+  let file_content = fs.readFileSync(params.cfg.packageJsonFile, 'utf8');
   params.packageJsonContent = JSON.parse(file_content);
 
   params.oldVersion = params.packageJsonContent.version?.toLowerCase();
 
   if(!params.oldVersion) {
-    throw `Proprietà 'version' di '${params.packageJsonFile}' non presente`;
+    throw `Proprietà 'version' di '${params.cfg.packageJsonFile}' non presente`;
+  } else {
+    console.log( styleText(['white', 'dim'], `Versione package.json attuale: ${params.oldVersion}` ) );
   }
 
   if(params.preRealeaseTags.some(tag => params.oldVersion.indexOf(`-${tag}.`) !== -1 )) {
@@ -68,119 +110,37 @@ try {
     throw 'Pre-release tag non mappato';
   }
 
-  // ********************************************
 
-  const runUpdate = (mode) => {
+  // =>> avvio
 
-    updateVersion(mode);
-
-    params.log_item.vers = params.newVersion;
-
-    if(params.log_item.descr) {
-      clipboard.writeSync('v.' + params.log_item.vers + ' - ' + params.log_item.descr);
-    }
-
+  (async () => {
+    const choice = await chooser();
     if(debug) {
-      delete params.packageJsonContent;
-      console.log(params);
-
-    } else {
-      updateFiles();
-      updateLog();
+      console.log(`\n**********\n${choice}\n**********\n`);
     }
+    if(choice) {
 
-  }; // end runUpdate
+      updateVersion(choice);
 
-  // ********************
+      params.log_item.vers = params.newVersion;
 
-  // =>> lettura configurazione e avvio
+      if(params.log_item.descr) {
+        clipboard.writeSync('v.' + params.log_item.vers + ' - ' + params.log_item.descr);
+      }
 
-  new Promise((resolve, reject) => {
+      if(debug) {
+        delete params.packageJsonContent;
+        console.log(params);
 
-    const cfg_param_index = process.argv.findIndex(el => /^--config/.test(el) );
-
-    if(cfg_param_index !== -1) {
-      let [, cfgPath] = process.argv[cfg_param_index].split('=');
-
-      getConfig(cfgPath, params.configProperty)
-        .then(parsedCfg => {
-          if(parsedCfg === false) {
-            reject('Errore nella lettura del file di configurazione');
-          } else {
-            resolve(parsedCfg);
-          }
-        });
-
-    } else {
-
-      // parametri CLI
-
-      let parsedCfg = {};
-      process.argv.forEach(param => {
-
-        if(/^--twig-vars-file/.test(param)) {
-          [, parsedCfg.twigVarsFile] = param.split('=');
-        }
-
-        if(/^--html-files/.test(param)) {
-          [, parsedCfg.htmlFiles] = param.split('=');
-          parsedCfg.htmlFiles = parsedCfg.htmlFiles.split(',');
-        }
-
-        if(/^--json-files/.test(param)) {
-          [, parsedCfg.jsonFiles] = param.split('=');
-          parsedCfg.jsonFiles = parsedCfg.jsonFiles.split(',');
-        }
-
-        if(/^--default-descr=(.*?)$/.test(param)) {
-          [, parsedCfg.defaultDescr] = param.split('=');
-        }
-
-      });
-
-      resolve(parsedCfg);
-
+      } else {
+        updateFiles();
+        updateLog();
+      }
     }
+  })();
 
-  })
-    .then( parsedCfg => {
-
-      params.cfg = {...params.cfgDefaults, ...(parsedCfg?? {})};
-
-      // parametri cli con precedenza rispetto a quelli del file cfg
-      if(process.argv.findIndex(el => el === '--patch-only') !== -1) {
-        params.cfg.patchOnly = true;
-      }
-
-      if(process.argv.findIndex(el => el === '--skip-descr-prompt') !== -1) {
-        params.cfg.skipDescrPrompt = true;
-      }
-
-      // forzatura di alcune parametri per l'avvio di nuovi progetti
-      if(params.startProj) {
-        params.cfg.defaultDescr = 'Setup';
-        params.cfg.skipDescrPrompt = false;
-        params.cfg.patchOnly = false;
-      }
-
-      log(chalk.dim(`\nVersione package.json attuale: ${params.oldVersion}\n`));
-
-      (async () => {
-        const choice = await chooser();
-        if(debug) {
-          console.log(`\n**********\n${choice}\n**********\n`);
-        }
-        if(choice) {
-          runUpdate(choice);
-        }
-      })();
-
-    })
-    .catch(err => {
-      throw err;
-    });
 
 } catch (err) {
-  console.error(chalk.bgRed(` ${err} `));
+  console.log( styleText(['bgRed'], ` ${err} ` ));
 }
 

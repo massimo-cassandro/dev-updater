@@ -3,9 +3,10 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import chalk from 'chalk';
+// https://nodejs.org/api/util.html#utilstyletextformat-text-options
+import { styleText } from 'node:util';
 
-export default async function (configFile, property) {
+export default async function (configFile) {
 
   configFile = path.resolve('./', configFile || './dev-utilities.config.mjs');
   // configFile = configFile || './dev-utilities.config.mjs';
@@ -17,14 +18,11 @@ export default async function (configFile, property) {
 
     const {default: cfg} = await import(configFile);
 
-    if(!cfg[property]) {
-      throw `Proprietà '${property}' non presente.`;
-    }
-
-    return cfg[property];
+    return cfg;
 
   } catch(e) {
-    console.error( chalk.red( e ) ); // eslint-disable-line
+    console.error( styleText(['red'], e ) );
+
     return false;
   }
 }

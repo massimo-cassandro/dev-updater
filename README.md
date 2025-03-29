@@ -62,98 +62,100 @@ Esempio di file di configurazione (file `dev-utilities.config.mjs`):
 
 const config = {
   /*
-    Configurazione per `update-version`
     Nessun parametro è obbligatorio
   */
-  updateVersion: {
-    twigVarsFile     : null,   // default null
-    htmlFiles        : null,   // default null
-    skipDescrPrompt  : false,  // default false
-    patchOnly        : false,  // default false
-    defaultDescr     : null    // default null
-  }
+  twigVarsFile     : null,   // default null
+  htmlFiles        : null,   // default null
+  jsonFiles        : null,   // default null
+  skipDescrPrompt  : false,  // default false
+  patchOnly        : false,  // default false
+  defaultDescr     : null,    // default null
+  logFile          : './changelog.txt', // path relativo al file di configurazione
+  packageJsonFile  : './package.json', // path relativo al file di configurazione
 };
 
 export default config;
 ```
-
-NB: il file di configurazione potrebbe essere condiviso da altre applicazioni, la parte utilizzata da *update-version* è quella relativa alla chiave `updateVersion`.
-
 
 
 Nel dettaglio:
 
 ```javascript
 const config = {
-  updateVersion: {
      
-    /*
-      percorso al file twig che contiene l'array di variabili globali  `glob_vars` che contiene a sua volta l'elemento `vers` che viene impostato col valore assegnato alla proprietà `version` di `packege.json`
-      (default null)
-    */
-    twigVarsFile: 'path/to/file/config.html.twig',
+  /*
+    percorso al file twig che contiene l'array di variabili globali  `glob_vars` che contiene a sua volta l'elemento `vers` che viene impostato col valore assegnato alla proprietà `version` di `package.json`
+    (default null)
+  */
+  twigVarsFile: 'path/to/file/config.html.twig',
 
-    /*
-      cerca la stringa `(?|&)(_|v)=1.2.3(-\d+)` associata ai tag che richiamano file js o css all'interno dei file html specificati e aggiorna il numero di versione
-      (default null)
-    */
-    htmlFiles: ['path/to/html_file1.html', 'path/to/html_file2', ...],
-    
-    /*
-      array di percorsi di file json da aggiornare con un ogetto di questo tipo:
-      `{"d": "<dataiso>", "v": "<versione>"}`
-    */
-    jsonFiles: ['path/to/file1.json', 'path/to/file2.json', ...],
+  /*
+    cerca la stringa `(?|&)(_|v)=1.2.3(-\d+)` associata ai tag che richiamano file js o css all'interno dei file html specificati e aggiorna il numero di versione
+    (default null)
+  */
+  htmlFiles: ['path/to/html_file1.html', 'path/to/html_file2', ...],
+  
+  /*
+    array di percorsi di file json da aggiornare con un oggetto di questo tipo:
+    `{"d": "<dataiso>", "v": "<versione>"}`
+  */
+  jsonFiles: ['path/to/file1.json', 'path/to/file2.json', ...],
 
-    /*
-      testo descrittivo di default mostrato tra le opzioni di aggiornamento
-      (default null)
-    */
-    defaultDescr: 'text',
+  /*
+    testo descrittivo di default mostrato tra le opzioni di aggiornamento
+    (default null)
+  */
+  defaultDescr: 'text',
 
-    /*
-      se impostato su `true` non viene mostrato il prompt con la richiesta del testo descrittivo (default false). 
-      Questa impostazione può essere sovrascritta dalla presenza del parametro CLI `--skip-descr-prompt`
-    */
-    skipDescrPrompt: true | false,
+  /*
+    se impostato su `true` non viene mostrato il prompt con la richiesta del testo descrittivo (default false). 
+    Questa impostazione può essere sovrascritta dalla presenza del parametro CLI `--skip-descr-prompt`
+  */
+  skipDescrPrompt: true | false,
 
-    /*
-      fa in modo che sia aggiornata direttamente la patch  version saltando l'opzione di scelta relativa (default false). 
-      Questa impostazione può essere sovrascritta dalla presenza del parametro CLI `--patch-only`
-    */
-    patchOnly: true | false
+  /*
+    fa in modo che sia aggiornata direttamente la patch  version saltando l'opzione di scelta relativa (default false). 
+    Questa impostazione può essere sovrascritta dalla presenza del parametro CLI `--patch-only`
+  */
+  patchOnly: true | false,
 
-  }
+  /* 
+    Percorso del file di log (default: './changelog.txt')
+    path relativo al file di configurazione
+  */
+  logFile          : './changelog.txt', 
+
+  /* 
+    Percorso del file `package.json` (default: './package.json')
+    path relativo al file di configurazione
+  */
+  packageJsonFile  : './package.json', 
+
 }
+export default config;
 ```
 
 Tutti parametri sono opzionali
 
 ### Parametri CLI
-Opzionalmente, alcuni parametri possono essere definiti direttamente via CLI:
+Oltre a `--config`, opzionalmente, alcuni parametri possono essere definiti direttamente via CLI:
 
 ```bash
 npx update-version \ 
+  --config=path/to/config.mjs
   --html-files=path/to/html_file1.html,path/to/html_file2.html,... \
   --json-files=path/to/file1.json,path/to/file2.json,... \
   --twig-vars-file=path/to/file/config.html.twig \
   --default-descr=text \
   --skip-descr-prompt \
-  --patch-only
+  --patch-only \
+  --log-file=path/to/changelog.txt \
+  --package-json-file=path/to/package.json
 ```
 
-I parametri 
+Tutti i parametri CLI, se presenti, prevalgono sulle eventuali impostazioni presenti nel file di configurazione
 
-* `--twig-vars-file`
-* `--html-files`
-* `--default-descr`
-
-vengono ignorati se il parametro `--config` è presente, mentre i parametri 
-
-* `--patch-only`
-* `--skip-descr-prompt`
-
-se presenti, prevalgono sulle eventuali impostazioni presenti nel file di configurazione
+Tutti percorsi indicati sono relativi alla directory root o dal punto da cui viene lanciato lo script.
 
 
 ## Utilizzo nella sezione script del file `package.json`

@@ -6,9 +6,9 @@
 // run npm update for all packeges inside `node_modules/@massimo-cassandro` folder
 
 import * as fs from 'fs';
-import chalk from 'chalk';
 import {execSync} from 'child_process';
-
+// https://nodejs.org/api/util.html#utilstyletextformat-text-options
+import { styleText } from 'node:util';
 
 const folder = './node_modules/@massimo-cassandro',
   packages = {};
@@ -53,15 +53,20 @@ try {
   });
 
 
-  console.log( '\n' + Object.keys(packages).map(p =>
-    chalk[packages[p].oldVers === packages[p].newVers? 'green' : 'yellow'](
-      `  • ${(p + ' '.repeat(maxLength)).slice(0, maxLength)}` +
-      ' : ' +
-      `${packages[p].oldVers} => ${packages[p].newVers}`
-    )
-  ).join('\n') );
-  console.log( chalk.bgGreen.bold( '\n Aggiornamento completato. \n' ) );
+  console.log( '\n' +
+    Object.keys(packages).map(p =>
+      styleText(
+        [packages[p].oldVers === packages[p].newVers? 'green' : 'yellow'],
+        `  • ${p.padEnd(' ', maxLength)}` +
+        ' : ' +
+        `${packages[p].oldVers} => ${packages[p].newVers}`
+      )
+    ).join('\n')
+  );
+
+  console.log( '\n' + styleText(['bold', 'bgGreen'], ' Aggiornamento completato. ' ) + '\n');
 
 } catch(e) {
-  console.error( chalk.red(`\n${e}\n`) );
+
+  console.log( styleText(['red'], `\n${e}\n` ) );
 }

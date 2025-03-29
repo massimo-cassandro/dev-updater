@@ -2,11 +2,6 @@
 /* eslint-disable no-console */
 
 export const params = {
-  packageJsonFile: './package.json',
-  logFile: './changelog.txt',
-
-  // chiave proprietà nel file di configurazione
-  configProperty: 'updateVersion',
 
   // defaults configurazione
   cfgDefaults: {
@@ -15,7 +10,9 @@ export const params = {
     jsonFiles        : null,
     skipDescrPrompt  : false,
     patchOnly        : false,
-    defaultDescr     : null
+    defaultDescr     : null,
+    logFile          : './changelog.txt',
+    packageJsonFile  : './package.json',
   },
 
   preRealeaseTags: ['alpha', 'beta', 'rc'],
