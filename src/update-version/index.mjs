@@ -28,8 +28,8 @@ const debug = false;
 try {
 
   // =>> parametri CLI
-  const [config_file, cli_cfg] = getCliParams();
-
+  let [config_file, cli_cfg] = getCliParams();
+  cli_cfg = cli_cfg || {};
 
   // =>> lettura e creazione oggetto di configurazione (params.cfg)
   let loadedCfg = {};
@@ -44,9 +44,10 @@ try {
 
     // risoluzione eventuali path presenti in loadedCfg e non presenti in cli_cfg
     ['packageJsonFile', 'logFile', 'twigVarsFile', 'htmlFiles', 'jsonFiles'].forEach(el => {
-      if(params.cfg[el] && !cli_cfg[el]) {
+
+      if(loadedCfg[el] && !cli_cfg?.[el]) {
         if(typeof loadedCfg[el] === 'string') {
-          loadedCfg[el] = path.resolve(config_file, loadedCfg[el]);
+          loadedCfg[el] = path.resolve(path.dirname(config_file), loadedCfg[el].trim());
 
         } else if(Array.isArray(loadedCfg[el])) {
           loadedCfg[el] = loadedCfg[el].map(file => {
@@ -57,7 +58,6 @@ try {
     });
   }
   params.cfg = {...params.cfgDefaults, ...(loadedCfg?? {}), ...(cli_cfg?? {})};
-
 
   // =>> init
 

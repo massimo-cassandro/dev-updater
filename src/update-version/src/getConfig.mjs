@@ -6,14 +6,20 @@ import * as path from 'path';
 // https://nodejs.org/api/util.html#utilstyletextformat-text-options
 import { styleText } from 'node:util';
 
+// config file può essere una stringa nulla, in questo caso si usa il nome file di default
 export default async function (configFile) {
 
-  configFile = path.resolve('./', configFile || './dev-utilities.config.mjs');
-  // configFile = configFile || './dev-utilities.config.mjs';
+  configFile = path.resolve('./', configFile || 'update-vers.config.mjs');
+
+  // per compatibilità con le versioni precedenti
+  if(!fs.existsSync(configFile)) {
+    configFile = path.resolve('./', 'dev-utilities.config.mjs');
+  }
+
   try {
 
     if(!fs.existsSync(configFile)) {
-      throw `\n-------------\n${configFile} non trovato.\n--------------\n`;
+      throw '\n-------------\nFile di configurazione non trovato.\n--------------\n';
     }
 
     const {default: cfg} = await import(configFile);

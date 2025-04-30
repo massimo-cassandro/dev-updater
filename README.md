@@ -28,7 +28,7 @@ Se un tag pre-release viene rilevato nella versione corrente, si può scegliere,
 Utilizzo:
 
 ```bash
-npx update-version --config=./dev-utilities.config.mjs
+npx update-version --config=./update-vers.config.mjs
 ```
 
 Il comando può essere eseguito anche senza installare il package:
@@ -37,7 +37,9 @@ Il comando può essere eseguito anche senza installare il package:
 npx --package=@massimo-cassandro/dev-utilities update-version
 ```
 
-In cui  `--config=<path>` indica il percorso al file `.mjs` di configurazione generale (vedi sotto). Il file deve esportare un oggetto con la proprietà `updateVersion`. Se il path non viene specificato, il file di default è `./dev-utilities.config.mjs` (sulla root del progetto).
+In cui  `--config=<path>` indica il percorso al file `.mjs` di configurazione generale (vedi sotto). Il file deve esportare un oggetto configurato come indicato di seguito. Se il path non viene specificato, il file di default è `update-vers.config.mjs` (nella dir corrente).
+
+>NB: per compatibilità con le versioni precedenti, viene considerato come file di defgault anche `dev-utilities.config.mjs`
 
 Se il file di configurazione non viene indicato, vengono utilizzate le impostazioni di default.
 
@@ -45,9 +47,9 @@ Quindi:
 
 ```bash 
 # il file di configurazione è quello indicato:
-npx update-version --config=./path/to/dev-utilities.config.mjs 
+npx update-version --config=./path/to/update-vers.config.mjs 
 
-# il file di configurazione è `./dev-utilities.config.mjs`
+# il file di configurazione è `./update-vers.config.mjs` (o `./dev-utilities.config.mjs`)
 npx update-version --config 
 
 # nessun file di configurazione, vengono utilizzate le impostazioni di default
@@ -56,7 +58,7 @@ npx update-version
 
 ### File di configurazione 
 
-Esempio di file di configurazione (file `dev-utilities.config.mjs`):
+Esempio di file di configurazione
 
 ```javascript
 
@@ -163,7 +165,7 @@ Tutti percorsi indicati sono relativi alla directory root o dal punto da cui vie
 ```json
 {
   "scripts": {
-     "update-version": "npx update-version --config=./dev-utilities.config.mjs",
+     "update-version": "npx update-version --config=./update-vers.config.mjs",
      "upd@m": "npx upd@m"
   }
 }
