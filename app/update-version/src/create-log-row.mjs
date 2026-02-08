@@ -1,6 +1,6 @@
 import { params } from './params.mjs';
 
-export function createLogText() {
+export function createLogRow() {
 
 
   if (params.markdownLog) {
@@ -10,9 +10,6 @@ export function createLogText() {
     });
     params.logRow.fullText = `* ${params.logRow.vers} (${dateStr})${params.logRow.descr ? ' - ' + params.logRow.descr : ''}`;
 
-    if(params.updateMode === 'init') {
-      params.logRow.fullText = '# Changelog\n\n' + params.logRow.fullText;
-    }
 
   } else {
 

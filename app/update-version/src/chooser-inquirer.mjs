@@ -25,7 +25,7 @@ export async function chooser() {
     choices: choices
   });
 
-  params.addLog = params.toLog.indexOf(answer) !== -1;
+  params.addLog = params.toLog.indexOf(answer) !== -1 || answer === 'init';
 
   if (answer && params.addLog) {
     const descr = await input({

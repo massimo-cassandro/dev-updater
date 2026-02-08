@@ -10,9 +10,11 @@ import { params } from './src/params.mjs';
 import { chooser } from './src/chooser-inquirer.mjs';
 import { getCliParams } from './src/get-cli-params.mjs';
 import { updateSemver } from './src/update-semver.mjs';
-import { createLogText } from './src/create-log-text.mjs';
+import { createLogRow } from './src/create-log-row.mjs';
 import { updateLogFile } from './src/update-log-file.mjs';
 import { updatePackageJson } from './src/update-packageJson.mjs';
+
+import clipboard from 'clipboardy';
 
 // https://nodejs.org/api/util.html#utilstyletextformat-text-options
 import { styleText } from 'node:util';
@@ -54,7 +56,7 @@ async function run() {
 
     // Scrive il log, se richiesto
     if(params.addLog) {
-      createLogText();
+      createLogRow();
 
       if(!params.debug) {
         updateLogFile();
@@ -71,6 +73,16 @@ async function run() {
     if(params.debug) {
       console.log(params);
     }
+
+    clipboard.writeSync(
+      ('v.' + params.newSemver) +
+      (params.logRow.descr
+        ? ' - ' + params.logRow.descr
+        : params.updateMode === 'patch'
+          ? ' - Fix'
+          : '')
+    );
+
 
     const setOutputRow = (text, rowLength, dim = false) =>
         styleText(['yellow'], '│ ') +

@@ -1,7 +1,7 @@
 
 # Update Version
 
-Legge la versione registrata in `package.json`, la aggiorna e mantine un file di log.
+Legge la versione registrata in `package.json`, la aggiorna e mantiene un file di log.
 
 Ogni aggiornamento aggiunge una riga al file `changelog.md` posizionato sulla root del progetto. Ogni riga contiene la data, la versione aggiornata  e opzionalmente un testo descrittivo.
 

@@ -3,7 +3,15 @@ import { params } from './params.mjs';
 
 export function updateLogFile() {
 
+
   if(params.logRow.fullText) {
-    fs.appendFileSync(params.logFile, params.logRow.fullText + '\n');
+
+    let text = params.logRow.fullText;
+
+    if(params.updateMode === 'init' && params.markdownLog) {
+      text = '# Changelog\n\n' + params.logRow.fullText;
+    }
+
+    fs.appendFileSync(params.logFile, text + '\n');
   }
 }

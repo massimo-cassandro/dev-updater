@@ -12,14 +12,13 @@ export default [
   // })),
 
   ...eslint_config,
-  // {
-  //   files: ['src/**/*.js'],
-  //   ignores: [
-  //     'dist/',
-  //     'build/',
-  //     '**/vendor/'
-  //   ],
-  // }
+  {
+    // files: ['src/**/*.js'],
+    ignores: [
+      'archived/',
+      'node_modules/'
+    ],
+  }
   // {
   //   languageOptions: {
   //     globals: {
