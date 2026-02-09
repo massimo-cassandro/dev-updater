@@ -1,6 +1,6 @@
 {
   "name": "@massimo-cassandro/dev-updater",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Web development uitilities",
   "bin": {
     "update-version": "./app/update-version/index.mjs",
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/massimo-cassandro/dev-updater/tree/main#readme",
   "files": [
-    "app/**/*.mjs"
+    "app/**/*.{mjs,js,md}"
   ],
   "engines": {
     "node": ">= 18.0.0",
