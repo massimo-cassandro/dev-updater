@@ -33,7 +33,7 @@ export async function chooser() {
       default: answer === 'init'
         ? 'Setup'
         : answer === 'patch'
-          ? 'Fix'
+          ? 'Upd / Fix'
           : ''
     });
     params.logRow.descr = descr.trim() || null;

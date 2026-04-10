@@ -79,7 +79,7 @@ async function run() {
       (params.logRow.descr
         ? ' - ' + params.logRow.descr
         : params.updateMode === 'patch'
-          ? ' - Fix'
+          ? ' - Upd / Fix'
           : '')
     );
 

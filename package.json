@@ -1,6 +1,6 @@
 {
   "name": "@massimo-cassandro/dev-updater",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Web development uitilities",
   "bin": {
     "update-version": "./app/update-version/index.mjs",
