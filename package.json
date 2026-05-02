@@ -1,6 +1,6 @@
 {
   "name": "@massimo-cassandro/dev-updater",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Web development uitilities",
   "bin": {
     "update-version": "./app/update-version/index.mjs",
@@ -42,6 +42,6 @@
     "clipboardy": "^4.0.0"
   },
   "devDependencies": {
-    "@massimo-cassandro/eslint-config": "^3.0.0"
+    "@massimo-cassandro/eslint-config": "^3.0.7"
   }
 }
