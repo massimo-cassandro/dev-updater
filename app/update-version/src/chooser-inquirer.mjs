@@ -5,9 +5,9 @@ import { params } from './params.mjs';
 
 export async function chooser() {
   const choices = [
-    { name: 'Aggiorna Major version', value: 'major' },
+    { name: 'Aggiorna Patch version', value: 'patch' },
     { name: 'Aggiorna Minor version', value: 'minor' },
-    { name: 'Aggiorna Patch version', value: 'patch' }
+    { name: 'Aggiorna Major version', value: 'major' }
   ];
 
   // Se il file di log non esiste, proponi l'inizializzazione
