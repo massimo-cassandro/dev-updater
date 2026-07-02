@@ -1,5 +1,8 @@
 # Dev updaters
 
+> This repository is no longer maintained, its contents have been merged into https://github.com/massimo-cassandro/minimo
+
+
 Utilità per lo sviluppo.
 
 vedi:
